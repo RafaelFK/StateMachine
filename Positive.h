@@ -24,11 +24,6 @@ public:
         cout << "Positive: " << inp << endl;
         return make_tuple(inp, inp);
     };
-    void step(const int &inp) override {
-        int nextState, out;
-        tie(nextState, out) = getNextValues(_state, inp);
-        _state = nextState;
-    };
 };
 
 #endif //STATEMACHINE_POSITIVE_H

@@ -34,7 +34,7 @@ namespace sm {
             using T_O = tuple<T_O1, T_O2>;
 
             Parallel2(const T_SM1 &sm1, const T_SM2 &sm2):
-                    StateMachine<T_I, T_S, T_O>(make_tuple(sm1.getState(), sm2.getState())),
+                    StateMachine<T_I, T_S, T_O>(make_tuple(sm1.getInitialState(), sm2.getInitialState())),
                     _sm1{sm1},
                     _sm2{sm2}
             {};
@@ -60,13 +60,6 @@ namespace sm {
                 );
             };
 
-            void step(const T_I &inp) override {
-                T_S nextState;
-                T_O out;
-                tie(nextState, out) = getNextValues(getState(), inp);
-                setState(nextState);
-            }
-
         private:
             const T_SM1 &_sm1;
             const T_SM2 &_sm2;
@@ -87,15 +80,41 @@ namespace sm {
         };
 
         template<class T_I, class T_S1, class T_S2, class T_O1, class T_O2>
-        class Parallel: public Parallel2<T_I, T_S1, T_O1, T_I, T_S2, T_O2> {
+        class Parallel: public StateMachine<T_I, tuple<T_S1, T_S2>, tuple<T_O1, T_O2>> {
         public:
             using T_SM1 = StateMachine<T_I, T_S1, T_O1>;
             using T_SM2 = StateMachine<T_I, T_S2, T_O2>;
 
+            using T_S = tuple<T_S1, T_S2>;
+            using T_O = tuple<T_O1, T_O2>;
+
             Parallel(const T_SM1 &sm1, const T_SM2 &sm2):
-                Parallel2<T_I, T_S1, T_O1, T_I, T_S2, T_O2> (
-                    sm1, sm2
-                ) {};
+                StateMachine<T_I, T_S, T_O> (
+                    make_tuple(sm1.getInitialState(), sm2.getInitialState())
+                ),
+                _sm1{sm1},
+                _sm2{sm2}
+                {};
+
+            T_O getNextValues(const T_S &state, const T_I& inp) const override {
+                T_S1 s1, ns1;
+                T_S2 s2, ns2;
+                T_O1 o1;
+                T_O2 o2;
+
+                tie(s1, s2) = state;
+                tie(ns1, o1) = _sm1.getNextValues(s1, inp);
+                tie(ns2, o2) = _sm2.getNextValues(s2, inp);
+
+                return make_tuple(
+                    make_tuple(ns1, ns2),
+                    make_tuple(o1, o2)
+                );
+            }
+
+        private:
+            const T_SM1 &_sm1;
+            const T_SM2 &_sm2;
         };
 
         template<class T_SM1, class T_SM2>

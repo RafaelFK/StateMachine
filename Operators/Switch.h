@@ -29,7 +29,7 @@ namespace sm {
             using T_S = tuple<T_S1, T_S2>;
 
             Switch(function<bool(const T_I&)> cond, T_SM1 &sm1, T_SM2 &sm2):
-                StateMachine<T_I, T_S, T_O>(make_tuple(sm1.getState(), sm2.getState())),
+                StateMachine<T_I, T_S, T_O>(make_tuple(sm1.getInitialState(), sm2.getInitialState())),
                 _sm1{sm1},
                 _sm2{sm2},
                 _cond{cond} {}
@@ -49,15 +49,6 @@ namespace sm {
                     return make_tuple(make_tuple(m1State, m2NextState), m2Out);
                 }
             };
-
-            void step(const T_I &inp) override {
-                T_S nextState;
-                T_O out;
-                tie(nextState, out) = getNextValues(this->getState(), inp);
-                this->setState(nextState);
-
-                cout << "OUT: " << out << endl;
-            }
 
         private:
             const T_SM1 &_sm1;

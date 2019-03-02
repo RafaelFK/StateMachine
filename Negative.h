@@ -24,11 +24,6 @@ public:
         cout << "Negative: " << inp << endl;
         return make_tuple(inp, inp);
     };
-    void step(const int &inp) override {
-        int nextState, out;
-        tie(nextState, out) = getNextValues(_state, inp);
-        _state = nextState;
-    };
 };
 
 #endif //STATEMACHINE_NEGATIVE_H

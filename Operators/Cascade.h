@@ -18,7 +18,7 @@ using sm::StateMachine;
 
 namespace sm {
     namespace operators {
-        template<class T_I1, class T_S1, class T_O1, class T_I2, class T_S2, class T_O2>
+        template<typename T_I1, typename T_S1, typename T_O1, typename T_I2, typename T_S2, typename T_O2>
         class Cascade : public StateMachine<T_I1, tuple<T_S1, T_S2>, T_O2> {
         public:
             using M1_T = StateMachine<T_I1, T_S1, T_O1>;
@@ -26,7 +26,7 @@ namespace sm {
             using S_T = tuple<T_S1, T_S2>;
 
             Cascade(M1_T &m1, M2_T &m2) : StateMachine <T_I1, S_T, T_O2>(
-                    make_tuple(m1.getState(), m2.getState())
+                    make_tuple(m1.getInitialState(), m2.getInitialState())
             ), _m1 {m1}, _m2 {m2} {}
 
             tuple <S_T, T_O2>
@@ -46,14 +46,6 @@ namespace sm {
                     m2Out
                 );
             }
-
-            void step(const T_I1 &inp) override {
-                S_T nextState;
-                T_O2 out;
-                tie(nextState, out) = getNextValues(this->getState(), inp);
-                this->setState(nextState);
-            }
-
 
         private:
             M1_T &_m1;

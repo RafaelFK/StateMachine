@@ -33,12 +33,8 @@ namespace sm {
             using T_O = T_I;
             using T_SM = StateMachine<T_I, T_S, T_O>;
 
-            Feedback(const T_SM &sm): StateMachine<T_I, T_S, T_O>(sm.getState()), _sm{sm} {};
+            Feedback(const T_SM &sm): StateMachine<T_I, T_S, T_O>(sm.getInitialState()), _sm{sm} {};
 
-            tuple<T_O, T_S>
-            getNextValues(const T_S &state, const T_I &inp) const override {
-
-            };
 
         private:
             T_SM const &_sm;
