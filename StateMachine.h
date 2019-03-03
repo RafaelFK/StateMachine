@@ -5,34 +5,37 @@
 #ifndef STATEMACHINE_STATEMACHINE_H
 #define STATEMACHINE_STATEMACHINE_H
 
-#include <tuple>
-#include <array>
 
-using std::tuple;
-using std::make_tuple;
-using std::tie;
-using std::array;
 
 namespace sm {
+    // Custom tuple used by getNextValues to return the next state and output
+    // from a state transition
+    template<typename T_STATE, typename T_OUT>
+    class StateOutputTuple {
+    public:
+        StateOutputTuple(T_STATE state, T_OUT out): s{state}, o{out} {}
+        T_STATE s;
+        T_OUT o;
+    };
+
     template<typename T_INP, typename T_STATE, typename T_OUT = T_STATE>
     class StateMachine {
     public:
         StateMachine(T_STATE initialState) :
             _initialState{initialState}, _state{initialState} {}
 
-        virtual tuple<T_STATE, T_OUT>
+        virtual StateOutputTuple<T_STATE, T_OUT>
         getNextValues(const T_STATE &state, const T_INP &inp) const = 0;
 
         T_OUT step(const T_INP &inp) {
-            T_STATE nextState;
-            T_OUT out;
-            tie(nextState, out) = getNextValues(_state, inp);
-            setState(nextState);
+            auto next = getNextValues(_state, inp);
 
-            return out;
+            setState(next.s);
+
+            return next.o;
         }
 
-        template<size_t N>
+        /*template<size_t N>
         array<T_OUT, N> transduce(const array<T_INP, N>& inps) {
             array<T_OUT, N> outs; int i = 0;
 
@@ -41,7 +44,7 @@ namespace sm {
             }
 
             return outs;
-        }
+        }*/
 
         bool done(const T_STATE& state) const {
             return false;

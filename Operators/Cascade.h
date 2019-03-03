@@ -6,45 +6,44 @@
 #define STATEMACHINE_CASCADE_H
 
 #include "../StateMachine.h"
-#include <iostream>
-#include <tuple>
 
-using std::tuple;
-using std::make_tuple;
-using std::tie;
-using std::cout;
-using std::endl;
 using sm::StateMachine;
+using sm::StateOutputTuple;
 
 namespace sm {
     namespace operators {
+        // Container for storing the states of the constituent machines
+        template<typename T_S1, typename T_S2>
+        class CascateState {
+        public:
+            CascateState(T_S1 s1, T_S2 s2): m1State{s1}, m2State{s2} {}
+            T_S1 m1State;
+            T_S2 m2State;
+        };
+
         template<typename T_I1, typename T_S1, typename T_O1, typename T_I2, typename T_S2, typename T_O2>
-        class Cascade : public StateMachine<T_I1, tuple<T_S1, T_S2>, T_O2> {
+        class Cascade : public StateMachine<T_I1, struct cascadeState<>, T_O2> {
         public:
             using M1_T = StateMachine<T_I1, T_S1, T_O1>;
             using M2_T = StateMachine<T_I2, T_S2, T_O2>;
-            using S_T = tuple<T_S1, T_S2>;
+            using S_T = CascateState<T_S1, T_S2>;
 
             Cascade(M1_T &m1, M2_T &m2) : StateMachine <T_I1, S_T, T_O2>(
-                    make_tuple(m1.getInitialState(), m2.getInitialState())
+                    {m1.getInitialState(), m2.getInitialState()}
             ), _m1 {m1}, _m2 {m2} {}
 
-            tuple <S_T, T_O2>
-            getNextValues(const S_T &state, const T_I1 &inp) const override {
-                T_S1 m1State, m1NewState;
-                T_S2 m2State, m2NewState;
-                T_O1 m1Out;
-                T_O2 m2Out;
+            StateOutputTuple<S_T, T_O2>
+            getNextValues(const S_T &state, const T_I1 &inp, S_T& nextState) const override {
+                T_S1 m1State = state.m1State;
+                T_S2 m2State = state.m2State;
 
-                tie(m1State, m2State) = state;
+                auto m1Next = _m1.getNextValues(m1State, inp);
+                auto m2Next = _m2.getNextValues(m2State, m1Next.o);
 
-                tie(m1NewState, m1Out) = _m1.getNextValues(m1State, inp);
-                tie(m2NewState, m2Out) = _m2.getNextValues(m2State, m1Out);
-
-                return make_tuple(
-                    make_tuple(m1NewState, m2NewState),
-                    m2Out
-                );
+                return {
+                        {m1Next.s, m2Next.s},
+                        m2Next.o
+                };
             }
 
         private:
