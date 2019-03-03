@@ -43,6 +43,10 @@ namespace sm {
             return outs;
         }
 
+        bool done(const T_STATE& state) const {
+            return false;
+        }
+
         T_STATE getInitialState() const { return _initialState; }
         void setState(T_STATE state) { _state = state; }
 
