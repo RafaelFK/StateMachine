@@ -14,34 +14,31 @@ namespace sm {
     namespace operators {
         // Container for storing the states of the constituent machines
         template<typename T_S1, typename T_S2>
-        class CascateState {
+        class CascateStateTuple {
         public:
-            CascateState(T_S1 s1, T_S2 s2): m1State{s1}, m2State{s2} {}
+            CascateStateTuple(T_S1 s1, T_S2 s2): m1State{s1}, m2State{s2} {}
             T_S1 m1State;
             T_S2 m2State;
         };
 
         template<typename T_I1, typename T_S1, typename T_O1, typename T_I2, typename T_S2, typename T_O2>
-        class Cascade : public StateMachine<T_I1, struct cascadeState<>, T_O2> {
+        class Cascade : public StateMachine<T_I1, CascateStateTuple<T_S1, T_S2>, T_O2> {
         public:
             using M1_T = StateMachine<T_I1, T_S1, T_O1>;
             using M2_T = StateMachine<T_I2, T_S2, T_O2>;
-            using S_T = CascateState<T_S1, T_S2>;
+            using S_T = CascateStateTuple<T_S1, T_S2>;
 
-            Cascade(M1_T &m1, M2_T &m2) : StateMachine <T_I1, S_T, T_O2>(
-                    {m1.getInitialState(), m2.getInitialState()}
+            Cascade(M1_T& m1, M2_T& m2) : StateMachine <T_I1, S_T, T_O2>(
+                    { m1.getInitialState(), m2.getInitialState() }
             ), _m1 {m1}, _m2 {m2} {}
 
             StateOutputTuple<S_T, T_O2>
-            getNextValues(const S_T &state, const T_I1 &inp, S_T& nextState) const override {
-                T_S1 m1State = state.m1State;
-                T_S2 m2State = state.m2State;
-
-                auto m1Next = _m1.getNextValues(m1State, inp);
-                auto m2Next = _m2.getNextValues(m2State, m1Next.o);
+            getNextValues(const S_T &state, const T_I1 &inp) const override {
+                auto m1Next = _m1.getNextValues(state.m1State, inp);
+                auto m2Next = _m2.getNextValues(state.m2State, m1Next.o);
 
                 return {
-                        {m1Next.s, m2Next.s},
+                        { m1Next.s, m2Next.s },
                         m2Next.o
                 };
             }

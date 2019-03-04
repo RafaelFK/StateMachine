@@ -9,20 +9,14 @@
 #include <tuple>
 #include <iostream>
 
-using std::tuple;
-using std::make_tuple;
-using std::tie;
-using std::cout;
-using std::endl;
-
 using sm::StateMachine;
+using  sm::StateOutputTuple;
 
 class Positive: public StateMachine<int, int> {
 public:
     Positive(): StateMachine(0) {};
-    tuple<int, int> getNextValues(const int &state, const int &inp) const override {
-        cout << "Positive: " << inp << endl;
-        return make_tuple(inp, inp);
+    StateOutputTuple<int, int> getNextValues(const int &state, const int &inp) const override {
+        return { inp, inp };
     };
 };
 

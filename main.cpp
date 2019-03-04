@@ -3,30 +3,30 @@
 #include "operators/Cascade.h"
 #include "operators/switch.h"
 #include "Elementary/Delay.h"
+#include "Elementary/PureFunction.h"
 #include "Negative.h"
 #include "Positive.h"
 #include "Elementary/Increment.h"
 #include "Utils/optional.h"
 #include <string>
 
+using std::cout;
+using std::endl;
+
 using sm::operators::Cascade;
+using sm::operators::Switch;
 using sm::operators::make_cascade;
 using sm::operators::make_switch;
 
 using sm::elementary::Delay;
 using sm::elementary::Accumulator;
 using sm::elementary::Increment;
+using sm::elementary::PureFunction;
 
 using nonstd::optional;
 using nonstd::nullopt;
 
 int main() {
-    Accumulator<int> a {1};
-
-    cout << a.step(2) << endl;
-    cout << a.step(5) << endl;
-    cout << a.step(9) << endl;
-
     Delay<int> d1 {1};
     Delay<int> d2 {10};
 
@@ -36,16 +36,24 @@ int main() {
     cout << c.step(44) << endl;
     cout << c.step(55) << endl;
 
-    Positive p;
-    Negative n;
-    auto s = make_switch([](int inp) -> bool { return inp >= 0; }, p, n);
+    Accumulator a {1};
 
-    s.step(1);
-    s.step(3);
-    s.step(-1);
-    s.step(2);
-    s.step(-10);
+    cout << a.step(2) << endl;
+    cout << a.step(5) << endl;
+    cout << a.step(9) << endl;
 
+    PureFunction<int, int> positive {[](int) -> int{ return 1; }};
+    PureFunction<int, int> negative {[](int) -> int{ return -1; }};
+
+    // The plus sign  triggers a conversion from lambda expression to function pointer
+    auto s = make_switch(+[](int inp) -> bool { return inp >= 0; }, positive, negative);
+
+    cout << s.step(1) << endl;
+    cout << s.step(3) << endl;
+    cout << s.step(-1) << endl;
+    cout << s.step(2) << endl;
+    cout << s.step(-10) << endl;
+    /*
     std::cout << "Hello, World!" << std::endl;
 
     optional<std::string> o {"Hello"};
@@ -64,6 +72,6 @@ int main() {
 
     std::array<int, 4> inps {3, 5, 7, 9};
     auto outs = c2.transduce(inps);
-
+*/
     return 0;
 }

@@ -53,9 +53,9 @@ namespace sm {
         T_STATE getInitialState() const { return _initialState; }
         void setState(T_STATE state) { _state = state; }
 
-        typedef T_INP input_type;
-        typedef T_STATE state_type;
-        typedef T_OUT output_type;
+        using input_type = T_INP;
+        using state_type = T_STATE;
+        using output_type = T_OUT;
     protected:
         const T_STATE _initialState;
         T_STATE _state;

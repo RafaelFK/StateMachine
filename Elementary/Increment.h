@@ -10,23 +10,22 @@
 #include <tuple>
 
 using sm::StateMachine;
-using std::is_arithmetic;
-using std::tuple;
+using sm::StateOutputTuple;
 
 namespace sm {
     namespace elementary {
         template<typename T>
         class Increment: public StateMachine<T, T> {
 // Ensure that T is an arithmetic type
-            static_assert(
+            /*static_assert(
                     is_arithmetic<T>::value,
                     "Invalid instantiation. Class Increment requires an arithmetic type"
-            );
+            );*/
 
         public:
             Increment(const T incr): StateMachine<T, T>({}), incr{incr} {}
-            tuple<T, T> getNextValues(const T& state, const T& inp) const  override {
-                return make_tuple(state, inp + incr);
+            StateOutputTuple<T, T> getNextValues(const T& state, const T& inp) const  override {
+                return {state, inp + incr};
             }
 
         private:

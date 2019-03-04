@@ -11,25 +11,25 @@
 #include "../StateMachine.h"
 
 using sm::StateMachine;
-using std::function;
-using std::tuple;
-using std::make_tuple;
+using sm::StateOutputTuple;
 
 namespace sm {
     namespace elementary {
         template<typename I, typename O>
         class PureFunction : public StateMachine<I, nullptr_t, O> {
         public:
-            PureFunction(function<O(const I&)> f) :
+            using F_T = O(*)(I);
+
+            PureFunction(F_T f) :
                 StateMachine<I, nullptr_t, O>(nullptr),
                 f {f} {}
 
-            tuple<nullptr_t, O> getNextValues(nullptr_t state, const I& inp) const override {
-                return make_tuple(nullptr, f(inp));
+            StateOutputTuple<nullptr_t, O> getNextValues(const nullptr_t& state, const I& inp) const override {
+                return {nullptr, f(inp)};
             }
 
         private:
-            function<O(const I&)> f;
+            F_T f;
         };
     }
 }
