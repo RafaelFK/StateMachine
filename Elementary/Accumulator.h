@@ -5,8 +5,6 @@
 #ifndef STATEMACHINE_ACCUMULATOR_H
 #define STATEMACHINE_ACCUMULATOR_H
 
-#include <tuple>
-#include <type_traits>
 #include "../StateMachine.h"
 
 using sm::StateMachine;

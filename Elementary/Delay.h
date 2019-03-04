@@ -6,8 +6,6 @@
 #define STATEMACHINE_DELAY_H
 
 #include "../StateMachine.h"
-#include <tuple>
-#include <iostream>
 
 using sm::StateMachine;
 using sm::StateOutputTuple;

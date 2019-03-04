@@ -4,8 +4,6 @@
 #include "operators/switch.h"
 #include "Elementary/Delay.h"
 #include "Elementary/PureFunction.h"
-#include "Negative.h"
-#include "Positive.h"
 #include "Elementary/Increment.h"
 #include "Utils/optional.h"
 #include <string>

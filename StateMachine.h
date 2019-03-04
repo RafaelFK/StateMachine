@@ -21,6 +21,7 @@ namespace sm {
     template<typename T_INP, typename T_STATE, typename T_OUT = T_STATE>
     class StateMachine {
     public:
+        // TODO: Look up constexpr constructor
         StateMachine(T_STATE initialState) :
             _initialState{initialState}, _state{initialState} {}
 
