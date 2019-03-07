@@ -5,9 +5,6 @@
 #ifndef STATEMACHINE_PUREFUNCTION_H
 #define STATEMACHINE_PUREFUNCTION_H
 
-#include <cstddef>
-#include <functional>
-#include <tuple>
 #include "../StateMachine.h"
 
 using sm::StateMachine;

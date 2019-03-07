@@ -29,7 +29,7 @@ namespace sm {
             using T_S = SwitchState<T_S1, T_S2>;
             using cond_t = bool(*)(T_I);
 
-            Switch(cond_t cond, T_SM1 &sm1, T_SM2 &sm2):
+            Switch(cond_t cond, const T_SM1& sm1, const T_SM2& sm2):
                 StateMachine<T_I, T_S, T_O>({sm1.getInitialState(), sm2.getInitialState()}),
                 _sm1{sm1},
                 _sm2{sm2},
@@ -46,8 +46,8 @@ namespace sm {
             };
 
         private:
-            const T_SM1 &_sm1;
-            const T_SM2 &_sm2;
+            const T_SM1& _sm1;
+            const T_SM2& _sm2;
             cond_t _cond;
         };
 
@@ -56,7 +56,7 @@ namespace sm {
 //            template<typename T_I, typename T_S1, typename T_O> typename T_SM1,
 //            template<typename T_I, typename T_S2, typename T_O> typename T_SM2
 //        >
-        auto make_switch(bool(*cond)(T_I), T_SM1& sm1, T_SM2& sm2) {
+        auto make_switch(bool(*cond)(T_I), const T_SM1& sm1, const T_SM2& sm2) {
             /*static_assert(
                     typeid(T_SM1::input_type) != typeid(T_SM2::input_type),
                     "Switch: State machines should have the same input!"

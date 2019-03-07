@@ -47,7 +47,7 @@ namespace sm {
             return outs;
         }*/
 
-        bool done(const T_STATE& state) const {
+        virtual bool done(const T_STATE& state) const {
             return false;
         }
 

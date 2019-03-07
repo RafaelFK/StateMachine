@@ -2,6 +2,7 @@
 #include "Elementary/Accumulator.h"
 #include "operators/Cascade.h"
 #include "operators/switch.h"
+#include "operators/Repeat.h"
 #include "Elementary/Delay.h"
 #include "Elementary/PureFunction.h"
 #include "Elementary/Increment.h"
@@ -25,10 +26,7 @@ using nonstd::optional;
 using nonstd::nullopt;
 
 int main() {
-    Delay<int> d1 {1};
-    Delay<int> d2 {10};
-
-    auto c = make_cascade(d1, d2);
+    auto c = Cascade{Delay{1}, Delay{2}};
 
     cout << c.step(33) << endl;
     cout << c.step(44) << endl;

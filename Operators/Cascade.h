@@ -28,7 +28,7 @@ namespace sm {
             using M2_T = StateMachine<T_I2, T_S2, T_O2>;
             using S_T = CascateStateTuple<T_S1, T_S2>;
 
-            Cascade(M1_T& m1, M2_T& m2) : StateMachine <T_I1, S_T, T_O2>(
+            Cascade(const M1_T& m1, const M2_T& m2) : StateMachine <T_I1, S_T, T_O2>(
                     { m1.getInitialState(), m2.getInitialState() }
             ), _m1 {m1}, _m2 {m2} {}
 
@@ -38,18 +38,18 @@ namespace sm {
                 auto m2Next = _m2.getNextValues(state.m2State, m1Next.o);
 
                 return {
-                        { m1Next.s, m2Next.s },
-                        m2Next.o
+                    { m1Next.s, m2Next.s },
+                    m2Next.o
                 };
             }
 
         private:
-            M1_T &_m1;
-            M2_T &_m2;
+            const M1_T& _m1;
+            const M2_T& _m2;
         };
 
         template<class T_SM1, class T_SM2>
-        auto make_cascade(T_SM1 &sm1, T_SM2 &sm2) {
+        auto make_cascade(const T_SM1& sm1, const T_SM2& sm2) {
             return Cascade <
                 typename T_SM1::input_type,
                 typename T_SM1::state_type,

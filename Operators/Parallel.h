@@ -54,7 +54,7 @@ namespace sm {
             using T_S = ParallelStateTuple<T_S1, T_S2>;
             using T_O = ParallelOutputTuple<T_O1, T_O2>;
 
-            Parallel2(const T_SM1 &sm1, const T_SM2 &sm2):
+            Parallel2(const T_SM1 sm1, const T_SM2 sm2):
                     StateMachine<T_I, T_S, T_O>({sm1.getInitialState(), sm2.getInitialState()}),
                     _sm1{sm1},
                     _sm2{sm2}
@@ -77,7 +77,7 @@ namespace sm {
         };
 
         template<class T_SM1, class T_SM2>
-        auto make_parallel2(const T_SM1 &sm1, const T_SM2 &sm2) {
+        auto make_parallel2(const T_SM1 sm1, const T_SM2 sm2) {
             return Parallel2<
                 T_SM1::input_type,
                 T_SM1::state_type,
@@ -104,7 +104,7 @@ namespace sm {
             using T_S = ParallelStateTuple<T_S1, T_S2>;
             using T_O = ParallelOutputTuple<T_O1, T_O2>;
 
-            Parallel(const T_SM1 &sm1, const T_SM2 &sm2):
+            Parallel(const T_SM1 sm1, const T_SM2 sm2):
                 StateMachine<T_I, T_S, T_O> (
                     {sm1.getInitialState(), sm2.getInitialState()}
                 ),
@@ -123,12 +123,12 @@ namespace sm {
             }
 
         private:
-            const T_SM1 &_sm1;
-            const T_SM2 &_sm2;
+            const T_SM1 _sm1;
+            const T_SM2 _sm2;
         };
 
         template<class T_SM1, class T_SM2>
-        auto make_parallel(const T_SM1 &sm1, const T_SM2 &sm2) {
+        auto make_parallel(const T_SM1 sm1, const T_SM2 sm2) {
             static_assert(
                 T_SM1::input_type != T_SM2::input_type,
                 "Parallel: State machines should have the same input type!"
